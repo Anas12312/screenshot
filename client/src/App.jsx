@@ -2,16 +2,29 @@ import { useRef } from 'react';
 import { useState } from 'react'
 import html2canvas from 'html2canvas';
 import domtoimage from 'dom-to-image';
+import { Suspense } from 'react';
+import Loading from './Components/Loading';
+import ErrorBoundry from './Components/ErrorBoundry';
+import { createElement } from 'react';
 
 function App() {
   const [url, setUrl] = useState('');
   const [iframeUrl, setIframeUrl] = useState('');
   const iframeRef = useRef(null);
-  const imageRef = useRef(null);
 
   const run = (e) => {
     e.preventDefault();
+
+    if (!url.startsWith('https://') && !url.startsWith('http://')) {
+      setIframeUrl('https://' + url);
+      return;
+    }
     setIframeUrl(url);
+  }
+
+  const onInputChange = (e) => {
+    const value = e.target.value;
+    setUrl(value)
   }
 
   const takeScreenShot = () => {
@@ -57,14 +70,15 @@ function App() {
             id='n'
             className='w-1/3 my-4 shadow appearance-none border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline font-mono'
             placeholder='www.example.com'
-            onChange={(e) => setUrl(e.target.value)}
+            onChange={onInputChange}
           />
           <button
             className='my-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-3 rounded'
           >Run</button>
         </form>
 
-        <iframe src={iframeUrl}
+        <iframe
+          src={iframeUrl}
           id='frame'
           ref={iframeRef}
           className='w-full h-full'
@@ -72,6 +86,7 @@ function App() {
           title='Custom title'
           credentialless='false'
         />
+
         <button
           className='my-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded'
           onClick={takeScreenShot}
