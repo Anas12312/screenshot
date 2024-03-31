@@ -2,20 +2,33 @@ import { useRef } from 'react';
 import { useState } from 'react'
 import html2canvas from 'html2canvas';
 import domtoimage from 'dom-to-image';
+import { Suspense } from 'react';
+import Loading from './Components/Loading';
+import ErrorBoundry from './Components/ErrorBoundry';
+import { createElement } from 'react';
 
 function App() {
   const [url, setUrl] = useState('');
   const [iframeUrl, setIframeUrl] = useState('');
   const iframeRef = useRef(null);
-  const imageRef = useRef(null);
 
   const run = () => {
+
+    if (!url.startsWith('https://') && !url.startsWith('http://')) {
+      setIframeUrl('https://' + url);
+      return;
+    }
     setIframeUrl(url);
   }
   async function takeScreenshot() {
     const response = await fetch('/ss')
     const result = await response.text()
     alert(result)
+  }
+
+  const onInputChange = (e) => {
+    const value = e.target.value;
+    setUrl(value)
   }
 
 
