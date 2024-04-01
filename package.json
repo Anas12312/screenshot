@@ -11,7 +11,6 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "desktop-screenshot": "^0.1.1",
     "express": "^4.19.2",
     "node-screenshots": "^0.1.9",
     "puppeteer": "^22.6.1"

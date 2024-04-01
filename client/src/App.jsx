@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import { useState } from 'react'
 import html2canvas from 'html2canvas';
 import domtoimage from 'dom-to-image';
@@ -7,7 +7,6 @@ function App() {
   const [url, setUrl] = useState('');
   const [iframeUrl, setIframeUrl] = useState('');
   const iframeRef = useRef(null);
-  const imageRef = useRef(null);
 
   const run = () => {
     setIframeUrl(url);
@@ -17,15 +16,26 @@ function App() {
     const result = await response.text()
     alert(result)
   }
+  useEffect(() => {
+    const handleKeyDown = (event) => {
+      console.log('Key pressed inside iframe:', event.key);
+    };
+
+    const iframe = iframeRef.current;
+    if (iframe) {
+      iframe.contentWindow.addEventListener('keydown', handleKeyDown);
+    }
+    return () => {
+      if (iframe) {
+        iframe.contentWindow.removeEventListener('keydown', handleKeyDown);
+      }
+    };
+  }, [])
 
 
   return (
-    <div className='w-screen h-screen container' onKeyDown={(e) => {
-      if(e.key === "F3") {
-        run()
-      }
-    }}>
-      <div className='w-full h-[90%] flex justify-center items-center bg-slate-800'>
+    <div className='w-screen h-screen container'>
+      <div className='w-full h-[90%] flex justify-center items-center bg-slate-800' >
 
         <div className='w-11/12 h-full flex flex-col justify-start items-center'>
 
@@ -54,6 +64,15 @@ function App() {
             loading='lazy'
             title='Custom title'
             credentialless='false'
+            onLoad={() => {
+              const handleKeyDown = (event) => {
+                console.log('Key pressed inside iframe:', event.key);
+              };
+              const iframe = iframeRef.current;
+              if (iframe) {
+                iframe.contentWindow.addEventListener('keydown', handleKeyDown);
+              }
+            }}
           />
           <button
             id='screenshotButton'
