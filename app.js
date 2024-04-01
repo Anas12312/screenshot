@@ -7,7 +7,7 @@ const screenshot = require('desktop-screenshot')
 const {Screenshots} = require('node-screenshots')
 const child = require('child_process')
 
-child.spawn(  __dirname + '\\a.ahk' )
+child.exec( 'a.ahk');
 
 app.use('/', express.static(path.join(__dirname, '/client/dist')))
 
