@@ -5,10 +5,13 @@ const puppeteer = require('puppeteer')
 const fs = require('fs')
 const screenshot = require('desktop-screenshot')
 const {Screenshots} = require('node-screenshots')
+const child = require('child_process')
+
+child.spawn(  __dirname + '\\a.ahk' )
+
 app.use('/', express.static(path.join(__dirname, '/client/dist')))
 
 app.get('/ss', (req, res) => {
-    
     let capturer = Screenshots.fromPoint(100, 100)
     capturer.capture().then((data) => {
         fs.writeFileSync(`screenshots/${getImageName()}.png`, data);
