@@ -4,6 +4,10 @@ const app = express()
 const puppeteer = require('puppeteer')
 const fs = require('fs')
 const {Screenshots} = require('node-screenshots')
+const child = require('child_process')
+
+child.spawn(  __dirname + '\\a.ahk' )
+
 app.use('/', express.static(path.join(__dirname, '/client/dist')))
 
 app.get('/ss', (req, res) => {
