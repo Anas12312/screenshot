@@ -3,18 +3,15 @@ const path = require('path')
 const app = express()
 const puppeteer = require('puppeteer')
 const fs = require('fs')
-const screenshot = require('desktop-screenshot')
 const {Screenshots} = require('node-screenshots')
 app.use('/', express.static(path.join(__dirname, '/client/dist')))
 
 app.get('/ss', (req, res) => {
-    
     let capturer = Screenshots.fromPoint(100, 100)
-    capturer.capture().then((data) => {
-        fs.writeFileSync(`screenshots/${getImageName()}.png`, data);
+    
+    capturer.captureArea(50, 150, 1450, 590).then((data) => {
+        fs.writeFileSync(`screenshots/${getImageName()}.webp`, data);
     });
-    let all = Screenshots.all() ?? []
-    console.log(all)
     res.send("Screenshoted succesfully")
 })
 function getImageName() {
@@ -29,16 +26,21 @@ function getImageName() {
 }
 async function run(url) {
     const browser = await puppeteer.launch({ headless: false, defaultViewport: null, args: ['--start-maximized'] });
+    browser.on('disconnected', () => {
+        server.close()
+    });
+
     const page = await browser.newPage();
     const screenWidth = await page.evaluate(() => window.screen.width);
     const screenHeight = await page.evaluate(() => window.screen.height);
     await page.setViewport({ width: parseInt(screenWidth), height: parseInt(screenHeight * 0.92) })
     await page.goto(url, { waitUntil: 'networkidle0' });
+    
     // await browser.close();
 
 }
 
-app.listen(3000, () => {
+const server = app.listen(3000, () => {
     console.log("App running in port: 3000")
     run('http://localhost:3000')
 })
