@@ -5,7 +5,7 @@ const puppeteer = require('puppeteer')
 const fs = require('fs')
 const {Screenshots} = require('node-screenshots')
 const child = require('child_process')
-
+const robot = require('robotjs')
 child.exec( 'a.ahk');
 
 app.use('/', express.static(path.join(__dirname, '/client/dist')))
@@ -29,17 +29,31 @@ function getImageName() {
     return `${year}-${month}-${day}_${hours}-${minutes}-${seconds}.png`;
 }
 async function run(url) {
-    const browser = await puppeteer.launch({ headless: false, defaultViewport: null, args: ['--start-maximized'] });
-    browser.on('disconnected', () => {
+    const browser = await puppeteer.launch({ headless: false, defaultViewport: null, args: ['--start-maximized'], handleSIGINT: false });
+    browser.on('disconnect', () => {
+        
+        // robot.keyToggle('alt', 'down')
+        // robot.keyTap('tab')
+        
+        
+        // robot.keyToggle('control', 'down')
+        // robot.keyToggle('alt', 'down')
+        // robot.keyToggle('shift', 'down')
+        // robot.keyTap('x')
+        // robot.keyToggle('control', 'up')
+        // robot.keyToggle('alt', 'up')
+        // robot.keyToggle('shift', 'up')
+
+
         server.close()
     });
 
     const page = await browser.newPage();
+    page.on('')
     const screenWidth = await page.evaluate(() => window.screen.width);
     const screenHeight = await page.evaluate(() => window.screen.height);
     await page.setViewport({ width: parseInt(screenWidth), height: parseInt(screenHeight * 0.92) })
     await page.goto(url, { waitUntil: 'networkidle0' });
-    
     // await browser.close();
 
 }
